@@ -6,16 +6,16 @@
     <img width="479" alt="Screenshot" src="assets/screenshots/mathlive-demo.png">
 </p>
 
-## MathLive: A Web Component for Math Input
+## MathLive: A Web Component for Math Input test
 
--   [x] A Web Component easy to integrate in your project, regardless of the
-        framework you use (or even if you use no framework)
--   [x] Beautiful, TeX-quality typesetting
--   [x] Easy to use interface for formula editing
--   [x] Designed for mobile devices with an extensive set of virtual keyboards
--   [x] Accessility support: screen reader compatible, and includes custom math-to-speech support
--   [x] Outputs **LaTeX**, **MathML** and **MathJSON** (Abstract Syntax Tree)
--   [x] And it is easy to customize to your needs!
+- [x] A Web Component easy to integrate in your project, regardless of the
+      framework you use (or even if you use no framework)
+- [x] Beautiful, TeX-quality typesetting
+- [x] Easy to use interface for formula editing
+- [x] Designed for mobile devices with an extensive set of virtual keyboards
+- [x] Accessility support: screen reader compatible, and includes custom math-to-speech support
+- [x] Outputs **LaTeX**, **MathML** and **MathJSON** (Abstract Syntax Tree)
+- [x] And it is easy to customize to your needs!
 
 [![Maintenance](https://img.shields.io/maintenance/yes/2020.svg)]()
 [![GitHub license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://raw.githubusercontent.com/arnog/mathlive/master/LICENSE.txt)
@@ -58,10 +58,10 @@ state changes.
 ```html
 <!DOCTYPE html>
 <html lang="en-US">
-    <body>
-        <math-field>f(x)=</math-field>
-        <script src="https://unpkg.com/mathlive/dist/mathlive.mjs"></script>
-    </body>
+  <body>
+    <math-field>f(x)=</math-field>
+    <script src="https://unpkg.com/mathlive/dist/mathlive.mjs"></script>
+  </body>
 </html>
 ```
 
@@ -73,36 +73,36 @@ Render static math equations by
 ```html
 <!DOCTYPE html>
 <html lang="en-US">
-    <body>
-        <h1>Euler's Identity</h1>
-        <p>$$e^{i\pi} + 1 = 0$$</p>
+  <body>
+    <h1>Euler's Identity</h1>
+    <p>$$e^{i\pi} + 1 = 0$$</p>
 
-        <script type="module">
-            import { renderMathInDocument } from 'https://unpkg.com/mathlive/dist/mathlive.mjs';
-            renderMathInDocument();
-        </script>
-    </body>
+    <script type="module">
+      import { renderMathInDocument } from "https://unpkg.com/mathlive/dist/mathlive.mjs";
+      renderMathInDocument();
+    </script>
+  </body>
 </html>
 ```
 
 ## Want to Help?
 
--   Using MathLive in your project? Want to support the project ongoing maintenance?
-    Consider making a donation with [PayPal](https://www.paypal.me/arnogourdol)
--   Something wrong? Got ideas for new features? Write up an issue. Read about
-    [Contributing](CONTRIBUTING.md) and follow our [Code of Conduct](CODE_OF_CONDUCT.md)
--   Want to contribute some code for an issue or a feature? Read the
-    [Contributor Guide](tutorials/CONTRIBUTOR_GUIDE.md) and the
-    [docs](http://docs.mathlive.io). Looking for inspiration? Pick one of
-    the [good first issues](https://github.com/arnog/mathlive/labels/good%20first%20issue)
+- Using MathLive in your project? Want to support the project ongoing maintenance?
+  Consider making a donation with [PayPal](https://www.paypal.me/arnogourdol)
+- Something wrong? Got ideas for new features? Write up an issue. Read about
+  [Contributing](CONTRIBUTING.md) and follow our [Code of Conduct](CODE_OF_CONDUCT.md)
+- Want to contribute some code for an issue or a feature? Read the
+  [Contributor Guide](tutorials/CONTRIBUTOR_GUIDE.md) and the
+  [docs](http://docs.mathlive.io). Looking for inspiration? Pick one of
+  the [good first issues](https://github.com/arnog/mathlive/labels/good%20first%20issue)
 
 ## More Questions?
 
--   Read the [Getting Started Guide](http://cortexjs.io/guides/mathfield-getting-started/)
--   Look at some [examples](http://cortexjs.io/mathlive/)
--   [Read the API documentation](https://cortexjs.io/docs/mathlive/)
--   Join our [Gitter community](https://gitter.im/cortex-js/community)
--   Drop a line to arno@arno.org or [/u/real_arnog](https://www.reddit.com/user/real_arnog)
+- Read the [Getting Started Guide](http://cortexjs.io/guides/mathfield-getting-started/)
+- Look at some [examples](http://cortexjs.io/mathlive/)
+- [Read the API documentation](https://cortexjs.io/docs/mathlive/)
+- Join our [Gitter community](https://gitter.im/cortex-js/community)
+- Drop a line to arno@arno.org or [/u/real_arnog](https://www.reddit.com/user/real_arnog)
 
 ## License
 
