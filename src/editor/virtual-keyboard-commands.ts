@@ -354,7 +354,9 @@ function toggleVirtualKeyboard(
                     mathfield.$focus();
                 }
             );
-            document.body.appendChild(mathfield.virtualKeyboard);
+            mathfield.config.toDOMElement.appendChild(
+                mathfield.virtualKeyboard
+            );
         }
         // For the transition effect to work, the property has to be changed
         // after the insertion in the DOM. Use setTimeout

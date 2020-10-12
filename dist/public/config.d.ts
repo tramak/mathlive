@@ -370,6 +370,7 @@ export declare type VirtualKeyboardOptions = {
      * level.
      */
     plonkSound?: string | HTMLAudioElement;
+    toDOMElement?: HTMLElement;
 };
 /**
  * These methods provide an opportunity to intercept or modify an action.

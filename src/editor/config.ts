@@ -210,6 +210,8 @@ export function update(
             default:
                 if (isArray(updates[key])) {
                     result[key] = [...updates[key]];
+                } else if (updates[key] instanceof Element) {
+                    result[key] = updates[key];
                 } else if (typeof updates[key] === 'object') {
                     result[key] = { ...updates[key] };
                 } else {
@@ -310,6 +312,7 @@ export function getDefault(): Required<MathfieldConfigPrivate> {
         speechEngine: 'local',
         speechEngineVoice: 'Joanna',
         speechEngineRate: '100%',
+        toDOMElement: document.body,
         speakHook: NO_OP_LISTENER,
         readAloudHook: NO_OP_LISTENER,
 

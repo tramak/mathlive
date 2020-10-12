@@ -418,6 +418,7 @@ export type VirtualKeyboardOptions = {
      * level.
      */
     plonkSound?: string | HTMLAudioElement;
+    toDOMElement?: HTMLElement;
 };
 
 /**

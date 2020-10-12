@@ -38,7 +38,7 @@
 
         <div class="mathfield" id="mf" tabindex='0'>f_0(x) = </div>
 
-
+        <div id="keyboard-content"></div>
         <math-field value="g(x)" class="mathfield" style="width:100%" tabindex="3" virtual-keyboard-mode="manual">
         </math-field>
         <math-field class="mathfield" id='mf2' style="width:100%" tabindex="2" virtual-keyboard-mode="manual">f_2(x) =
@@ -128,6 +128,7 @@
                     err.code + ' ' + (err.arg ?? '')
                 );
             },
+            toDOMElement: document.getElementById('keyboard-content')
         });
 
         function updateContent(mf) {

@@ -32,10 +32,10 @@ export declare type KeystrokeEvent = {
 };
 /**
  * This event signals that the mathfield has lost focus through keyboard
- * navigation, using either arrow keys or tab.
+ * navigation with arrow keys or the tab key.
  *
  * The event `detail.direction` property indicates the direction the cursor
- * was moving which can be useful to decide what to focus next.
+ * was moving which can be useful to decide which element to focus next.
  */
 export declare type FocusOutEvent = {
     direction: 'forward' | 'backward' | 'upward' | 'downward';
@@ -70,6 +70,11 @@ declare global {
  *  getElementById('mf').value = '\\sin x';
  *  getElementById('mf').$setConfig({horizontalSpacingScale: 1.1});
  * ```
+ *
+ * Most properties are reflected: changing the attribute will also change the
+ * property and vice versa) except for `value` whose attribute value is not
+ * updated.
+ *
  *
  * In addition, the following [global attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes)
  * can also be used:
@@ -106,6 +111,8 @@ declare global {
  * | `virtual-keyboard-mode` | `options.keyboardMode` |
  * | `virtual-keyboard-theme` | `options.keyboardTheme` |
  * | `virtual-keyboards` | `options.keyboards` |
+ *
+ *  See {@see config} for more details about these options.
  *
  * ### Events
  *
@@ -214,6 +221,12 @@ export declare class MathfieldElement extends HTMLElement implements Mathfield {
     set disabled(value: boolean);
     get disabled(): boolean;
     set value(value: string);
+    /**
+     * The content of the mathfield as a Latex expression.
+     * ```
+     * document.querySelector('mf').value = '\\frac{1}{\\pi}'
+     * ```
+     */
     get value(): string;
 }
 export default MathfieldElement;
