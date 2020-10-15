@@ -1,11 +1,7 @@
 import { pathFromString, clone as clonePath, Path } from './path';
-import {
-    setPath,
-    selectGroup,
-    setRange,
-    selectAll,
-    filter,
-} from './model-selection';
+
+import { setPath } from './model-selection-utils';
+import { selectGroup, setRange, selectAll, filter } from './model-selection';
 import { on, off } from './mathfield-utils';
 import type { MathfieldPrivate } from './mathfield-class';
 import { requestUpdate } from './mathfield-render';
@@ -59,9 +55,6 @@ export function onPointerDown(
         }
         trackingPointer = false;
         clearInterval(scrollInterval);
-        that.element
-            .querySelectorAll('.ML__scroller')
-            .forEach((x) => x.parentNode.removeChild(x));
         evt.preventDefault();
         evt.stopPropagation();
     }
@@ -143,11 +136,9 @@ export function onPointerDown(
         anchorY <= bounds.bottom
     ) {
         // Focus the mathfield
-        if (!mathfield.$hasFocus()) {
+        if (!mathfield.hasFocus()) {
             dirty = true;
-            if (mathfield.textarea.focus) {
-                mathfield.textarea.focus();
-            }
+            mathfield.keyboardDelegate.focus();
         }
 
         // Clicking or tapping the field resets the keystroke buffer and
@@ -171,17 +162,9 @@ export function onPointerDown(
             anchor = pathFromPoint(mathfield, anchorX, anchorY, { bias: 0 });
         }
         if (anchor) {
-            // Create divs to block out pointer tracking to the left and right of
-            // the mathfield (to avoid triggering the hover of the virtual
-            // keyboard toggle, for example)
-            let div = document.createElement('div');
-            div.className = 'ML__scroller';
-            mathfield.element.appendChild(div);
-            div.style.left = bounds.left - 200 + 'px';
-            div = document.createElement('div');
-            div.className = 'ML__scroller';
-            mathfield.element.appendChild(div);
-            div.style.left = bounds.right + 'px';
+            // Set a `tracking` class to avoid triggering the hover of the virtual
+            // keyboard toggle, for example
+            mathfield.element.classList.add('tracking');
 
             if (evt.shiftKey) {
                 // Extend the selection if the shift-key is down
@@ -306,51 +289,54 @@ export function pathFromPoint(
 ): Path {
     options = options ?? {};
     options.bias = options.bias ?? 0;
-    let result;
     // Try to find the deepest element that is near the point that was
     // clicked on (the point could be outside of the element)
     const nearest = nearestElementFromPoint(mathfield.field, x, y);
     const el = nearest.element;
     const id = el ? el.getAttribute('data-atom-id') : null;
-    if (id) {
-        // Let's find the atom that has a matching ID with the element that
-        // was clicked on (or near)
-        const paths = filter(mathfield.model, (_path, atom) => {
-            // If the atom allows children to be selected, match only if
-            // the ID of  the atom matches the one we're looking for.
-            if (!atom.captureSelection) {
-                return atom.id === id;
-            }
-            // If the atom does not allow children to be selected
-            // (captureSelection === true), the element matches if any of
-            // its children has an ID that matches.
-            return atom.filter((childAtom) => childAtom.id === id).length > 0;
-        });
-        if (paths && paths.length > 0) {
-            // (There should be exactly one atom that matches this ID...)
-            // Set the result to the path to this atom
-            result = pathFromString(paths[0]).path;
-            if (options.bias === 0) {
-                // If the point clicked is to the left of the vertical midline,
-                // adjust the path to *before* the atom (i.e. after the
-                // preceding atom)
-                const bounds = el.getBoundingClientRect();
-                if (
-                    x < bounds.left + bounds.width / 2 &&
-                    !el.classList.contains('ML__placeholder')
-                ) {
-                    result[result.length - 1].offset = Math.max(
-                        0,
-                        result[result.length - 1].offset - 1
-                    );
-                }
-            } else if (options.bias < 0) {
-                result[result.length - 1].offset = Math.min(
-                    mathfield.model.siblings().length - 1,
-                    Math.max(0, result[result.length - 1].offset + options.bias)
-                );
-            }
+    if (!id) return undefined;
+
+    // Let's find the atom that has a matching ID with the element that
+    // was clicked on (or near)
+    const paths = filter(mathfield.model, (atom) => {
+        // If the atom allows children to be selected, match only if
+        // the ID of  the atom matches the one we're looking for.
+        if (!atom.captureSelection) {
+            return atom.id === id;
         }
+        // If the atom does not allow children to be selected
+        // (captureSelection === true), the element matches if any of
+        // its children has an ID that matches.
+        let found = false;
+        atom.forEach((x) => {
+            if (x.id === id) found = true;
+        });
+        return found;
+    });
+    if (!paths || paths.length === 0) return undefined;
+
+    // (There should be exactly one atom that matches this ID...)
+    // Set the result to the path to this atom
+    const result = pathFromString(paths[0]).path;
+    if (options.bias === 0) {
+        // If the point clicked is to the left of the vertical midline,
+        // adjust the path to *before* the atom (i.e. after the
+        // preceding atom)
+        const bounds = el.getBoundingClientRect();
+        if (
+            x < bounds.left + bounds.width / 2 &&
+            !el.classList.contains('ML__placeholder')
+        ) {
+            result[result.length - 1].offset = Math.max(
+                0,
+                result[result.length - 1].offset - 1
+            );
+        }
+    } else if (options.bias < 0) {
+        result[result.length - 1].offset = Math.min(
+            mathfield.model.siblings().length - 1,
+            Math.max(0, result[result.length - 1].offset + options.bias)
+        );
     }
     return result;
 }

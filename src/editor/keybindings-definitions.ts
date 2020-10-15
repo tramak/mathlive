@@ -1,4 +1,4 @@
-import type { Keybinding } from '../public/config';
+import type { Keybinding } from '../public/options';
 
 export const DEFAULT_KEYBINDINGS: Keybinding[] = [
     { key: 'ctrl+alt+e', command: ['insert', '\\text{cmd+alt+e}'] },
@@ -199,12 +199,19 @@ export const DEFAULT_KEYBINDINGS: Keybinding[] = [
         command: ['insert', '$$\\left\\lbrace #0 \\right\\rbrace$$'],
     }, // ??
 
-    { key: '[Return]', ifMode: 'math', command: 'addRowAfter' },
-    { key: '[Enter]', ifMode: 'math', command: 'addRowAfter' },
+    { key: 'ctrl+[Return]', ifMode: 'math', command: 'addRowAfter' },
+    { key: 'ctrl+[Enter]', ifMode: 'math', command: 'addRowAfter' },
+    { key: 'cmd+[Return]', ifMode: 'math', command: 'addRowAfter' },
+    { key: 'cmd+[Enter]', ifMode: 'math', command: 'addRowAfter' },
+    { key: 'ctrl+;', ifMode: 'math', command: 'addRowAfter' },
+    { key: 'cmd+;', ifMode: 'math', command: 'addRowAfter' },
+    { key: 'ctrl+shift+;', ifMode: 'math', command: 'addRowBefore' },
+    { key: 'cmd+shift+;', ifMode: 'math', command: 'addRowBefore' },
+
     { key: 'ctrl+[Comma]', ifMode: 'math', command: 'addColumnAfter' },
-    { key: '[Return]', ifMode: 'text', command: 'addRowAfter' },
-    { key: '[Enter]', ifMode: 'text', command: 'addRowAfter' },
-    { key: 'ctrl+[Comma]', ifMode: 'text', command: 'addColumnAfter' },
+    { key: 'cmd+[Comma]', ifMode: 'math', command: 'addColumnAfter' },
+    { key: 'ctrl+shift+[Comma]', ifMode: 'math', command: 'addColumnAfter' },
+    { key: 'cmd+shift+[Comma]', ifMode: 'math', command: 'addColumnAfter' },
 
     // Excel keybindings:
     // shift+space: select entire row, ctrl+space: select an entire column

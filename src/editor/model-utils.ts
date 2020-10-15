@@ -1,9 +1,10 @@
 import type { ParseMode } from '../public/core';
-import type { Mathfield } from '../public/mathfield';
+import type { Mathfield, Range } from '../public/mathfield';
 import type { ModelPrivate } from './model-class';
 
 import type { MacroDictionary } from '../core/definitions';
 import type { Atom } from '../core/atom';
+import { PositionIterator } from './model-iterator';
 
 export type ModelOptions = {
     mode: ParseMode;
@@ -67,4 +68,51 @@ export function invalidateVerbatimLatex(model: ModelPrivate): void {
         depth += 1;
         atom = model.ancestor(depth);
     }
+}
+
+/**
+ * Ensure that the range is valid and canonical, i.e.
+ * - start <= end
+ * - collapsed = start === end
+ * - start >= 0, end >=0
+ */
+export function normalizeRange(iter: PositionIterator, range: Range): Range {
+    const result: Range = { ...range };
+
+    const lastPosition = iter.lastPosition;
+
+    // 1. Normalize the start
+    if (result.start < 0) {
+        result.start = Math.max(0, lastPosition + result.start + 1);
+    } else if (isNaN(result.start)) {
+        result.start = 0;
+    } else {
+        result.start = Math.min(result.start, lastPosition);
+    }
+
+    // 2. Normalize the end
+    if (result.end < 0) {
+        result.end = Math.max(0, lastPosition + result.end + 1);
+    } else if (isNaN(result.end)) {
+        result.end = result.start;
+    } else {
+        result.end = Math.min(result.end, lastPosition);
+    }
+    // 3. Normalize the direction
+    if (result.start < result.end) {
+        result.direction = 'forward';
+    } else {
+        [result.start, result.end] = [result.end, result.start];
+        result.direction = 'backward';
+    }
+    // 4. Normalize `collapsed`
+    result.collapsed = result.start === result.end;
+    if (result.collapsed) {
+        result.direction = 'none';
+    }
+    // 5. Normalize the depth
+    if (iter.positions[result.start]) {
+        result.depth = iter.positions[result.start].depth - 1;
+    }
+    return result;
 }

@@ -8,10 +8,10 @@ import {
     parseString,
 } from '../core/core';
 
-import { getAnchor } from './model-selection';
+import { getAnchor } from './model-selection-utils';
 import { getKeybindingsForCommand } from './keybindings';
 import { attachButtonHandlers } from './mathfield-buttons';
-import { getCaretPosition } from './mathfield-utils';
+import { getCaretPoint } from './mathfield-utils';
 
 import type { MathfieldPrivate } from './mathfield-class';
 
@@ -276,11 +276,11 @@ function getNote(symbol): string {
 }
 
 function latexToMarkup(latex: string, mf: MathfieldPrivate): string {
-    const parse = parseString(latex, 'math', null, mf.config.macros);
+    const parse = parseString(latex, 'math', null, mf.options.macros);
     const spans = decompose(
         {
             mathstyle: MATHSTYLES.displaystyle,
-            macros: mf.config.macros,
+            macros: mf.options.macros,
         },
         parse
     );
@@ -366,18 +366,18 @@ export function updatePopoverPosition(
                 hidePopover(mf);
             } else {
                 // ... get the caret position
-                const position = getCaretPosition(mf.field);
-                if (position) setPopoverPosition(mf, position);
+                const caretPoint = getCaretPoint(mf.field);
+                if (caretPoint) setPopoverPosition(mf, caretPoint);
             }
         }
     }
 }
 
 export function showPopover(mf: MathfieldPrivate, markup: string): void {
-    mf.popover.innerHTML = mf.config.createHTML(markup);
+    mf.popover.innerHTML = mf.options.createHTML(markup);
 
-    const position = getCaretPosition(mf.field);
-    if (position) setPopoverPosition(mf, position);
+    const caretPoint = getCaretPoint(mf.field);
+    if (caretPoint) setPopoverPosition(mf, caretPoint);
 
     mf.popover.classList.add('is-visible');
 }

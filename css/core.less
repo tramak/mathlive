@@ -39,7 +39,7 @@ body.ML__fonts-loading .ML__base {
 
 /* Text mode */
 .ML__text {
-    font-family: var(--ml_text-font-family, @system);
+    font-family: var(--text-font-family, @system);
     white-space: pre;
 }
 
@@ -723,6 +723,19 @@ body.ML__fonts-loading .ML__base {
     background-repeat: repeat-x;
     background-size: 3px 3px;
     background-position: 0 98%;
+}
+
+.ML__composition {
+    background: #fff1c2;
+    color: black;
+    text-decoration: underline var(--caret, hsl(var(--hue, 212), 40%, 49%));
+}
+
+@media (prefers-color-scheme: dark) {
+    .ML__composition {
+        background: #69571c;
+        color: white;
+    }
 }
 
 .ML__placeholder {

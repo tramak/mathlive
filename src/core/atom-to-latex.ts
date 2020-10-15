@@ -2,7 +2,8 @@ import { isArray, isFunction } from '../common/types';
 
 import type { Atom } from './atom';
 import { emit as emitDefinition } from './definitions';
-import { joinLatex, emitLatexRun, getPropertyRuns } from './modes-utils';
+import { joinLatex } from './tokenizer';
+import { emitLatexRun, getPropertyRuns } from './modes-utils';
 import { colorToString } from './color';
 
 // See https://tex.stackexchange.com/questions/58098/what-are-all-the-font-styles-i-can-use-in-math-mode
@@ -354,6 +355,9 @@ export function atomToLatex(atom: Atom, expandMacro: boolean): string {
 
         case 'error':
             result += atom.latex;
+            break;
+        case 'composition':
+            result = '';
             break;
 
         case '':

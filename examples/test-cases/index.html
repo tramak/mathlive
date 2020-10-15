@@ -20,31 +20,58 @@
             color: #666;
         }
 
+
         #mathfield-container {
             padding: 8px;
             min-width: 50px;
             border: 1px solid #ddd;
+        }
+
+        #ta {
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .label {
+            font-weight: 700;
         }
     </style>
 </head>
 
 <body>
     <header>
-        <h1>MathLive Test Cases</h1>
+        <h1>MathLive Testing Playground</h1>
     </header>
-    <main>
+    <main class='centered'>
+        <math-field id="mf" class="mathfield" style="max-width: 400px; width:100%" tabindex="0"
+            virtual-keyboard-mode="manual"></math-field>
 
-        <section id='mathfield-container'></section>
+        <div class="centered"><input id='ta' placeholder="Find Latex"></input></div>
 
-        <div class="mathfield" id="mf" tabindex='0'>f_0(x) = </div>
+        <div id="search-results" class='centered'>
+            <h2 style='margin-top: 1em'>Search Results</h2>
+            <div class="output" id="search-results-output"></div>
+        </div>
 
         <div id="keyboard-content"></div>
-        <math-field value="g(x)" class="mathfield" style="width:100%" tabindex="3" virtual-keyboard-mode="manual">
+        <h2 style='margin-top: 1em'>Selection</h2>
+        <div class="output" id="selection"></div>
+
+        <!-- <math-field class="mathfield" style="width:100%" tabindex="4" virtual-keyboard-mode="manual">f_{4}(x) =
         </math-field>
-        <math-field class="mathfield" id='mf2' style="width:100%" tabindex="2" virtual-keyboard-mode="manual">f_2(x) =
+
+        <math-field class="mathfield" style="width:100%" tabindex="-1" virtual-keyboard-mode="manual">f_{-1}(x) =
         </math-field>
-        <math-field class="mathfield" style="width:100%" tabindex="4" virtual-keyboard-mode="manual">f_4(x) =
-        </math-field>
+
+
+        <div class="mathfield" id="oldschool-mf" tabindex=' 0'>f_0(x) = </div>
+
+        <section id='mathfield-container'></section> -->
+
         <!-- (x,,2) -->
         <!-- -123, 456.789, -->
         <!-- x_5 -->
@@ -80,133 +107,113 @@
 
         <h2>Latex</h2>
         <div class="output" id="latex"></div>
-        <h2>MathJSON Canonical Form</h2>
-        <div class="output" id="mathjson-canonical"></div>
-        <h2>MathJSON Full Form</h2>
-        <div class="output" id="mathjson-full"></div>
-        <h2>MathJSON Raw</h2>
-        <div class="output" id="mathjson-raw"></div>
         <h2>MathASCII</h2>
         <div class="output" id="mathascii"></div>
     </main>
 
     <script type="module">
-        import MathLive from '/dist/mathlive.mjs';
-        import { mathjsonToLatex, latexToMathjson } from '/dist/mathlive.mjs';
+        import { convertLatexToMarkup } from '/dist/mathlive.mjs';
 
-        // document.getElementById('mf2').addEventListener('tab-out-of', (ev) => {
-        //     console.log('tab out ' + ev.detail.direction);
-        //     ev.preventDefault();
-        //     return false;
-        // });
-        let mfe = new MathfieldElement();
-        // Deferred assignments
-        mfe.value = "\\frac{\\sin(x)}{\\cos(x)}";
-        mfe.setAttribute('virtual-keyboard-layout', 'dvorak');
-        mfe.$setConfig({
-            virtualKeyboardMode: 'manual',
-        });
-        // mfe.setAttribute('disabled', '');   // sets to true
+        let gSearchLatex;
 
-        // Attach the element (and use the attached values);
-        document.getElementById('mathfield-container').appendChild(mfe);
+        function applySearchTerm() {
+            if (!gSearchLatex) {
+                document.getElementById('search-results').classList.add('hidden');
+                return;
+            }
+            document.getElementById('search-results').classList.remove('hidden');
+            const md = document.getElementById('mf');
+            const searchResults = mf.find(gSearchLatex);
 
-        document.getElementById('mathfield-container').removeChild(mfe);
+            document.getElementById('search-results-output').innerHTML =
+                searchResults.
+                    map(range => `${range.start}, ${range.end} = "${mf.getValue(range)}"`).
+                    join('<br>');
 
-        document.getElementById('mathfield-container').appendChild(mfe);
+        }
 
-        let mf = MathLive.makeMathField('mf', {
-            smartFence: true,
-            smartMode: true,
-            virtualKeyboardMode: 'manual',
-            onContentDidChange: (mf) => {
-                updateContent(mf)
-            },
-            onError: (err) => {
-                console.error(
-                    err.latex,
-                    err.code + ' ' + (err.arg ?? '')
-                );
-            },
-            toDOMElement: document.getElementById('keyboard-content')
+        document.getElementById('mf').setOptions({
+            inlineShortcuts: {
+                // ㄱ: '\\sqrt',
+                sq: '\\sqrt{#0}',
+                // ㄱㄴ: '\\sqrt{#0}',
+                "ㄱㄴ": '\\sqrt{#0}',
+            }
         });
 
+        const ta = document.getElementById('ta');
+        ta.addEventListener('change', (ev) => {
+            gSearchLatex = ta.value;
+            applySearchTerm();
+        });
+
+        const mf = document.getElementById('mf');
+        mf.selection = [{ start: 2, end: 5 }];
+        mf.addEventListener('input', (ev) => {
+            updateContent(mf);
+            applySearchTerm();
+        });
+        mf.addEventListener('change', (ev) => {
+        });
+        mf.addEventListener('selection-change', (ev) => {
+            const selection = mf.selection[0];
+            document.getElementById('selection').innerHTML =
+                label("start     ") + selection.start + "<br>" +
+                label("end       ") + selection.end + "<br>" +
+                label("depth     ") + selection.depth + "<br>" +
+                label("direction ") + '\"' + selection.direction + "\"<br>" +
+                label("collapsed ") + (selection.collapsed ? "true" : "false") + "<br>" +
+                label("value     ") + '\"' + mf.getValue(selection) + '"'
+        });
+        updateContent(mf);
+        applySearchTerm();
+
+        let mathfieldContainer = document.getElementById('mathfield-container');
+        if (mathfieldContainer) {
+            let mfe = new MathfieldElement();
+            // Deferred assignments
+            mfe.value = "\\frac{\\sin(x)}{\\cos(x)}";
+            mfe.setAttribute('virtual-keyboard-layout', 'dvorak');
+            mfe.setOptions({
+                virtualKeyboardMode: 'manual',
+            });
+            // mfe.setAttribute('disabled', '');   // sets to true
+
+            // Attach the element (and use the attached values);
+            mathfieldContainer.appendChild(mfe);
+
+            mathfieldContainer.removeChild(mfe);
+
+            mathfieldContainer.appendChild(mfe);
+        }
+        if (document.getElementById('oldschool-mf')) {
+            MathLive.makeMathField('oldschool-mf', {
+                smartFence: true,
+                smartMode: true,
+                virtualKeyboardMode: 'manual',
+                // onContentDidChange: (mf) => {
+                //     updateContent(mf)
+                // },
+                onError: (err) => {
+                    console.error(
+                        err.latex,
+                        err.code + ' ' + (err.arg ?? '')
+                    );
+                },
+                toDOMElement: document.getElementById('keyboard-content')
+            });
+        }
         function updateContent(mf) {
-            const latex = mf.$text('latex-expanded');
+            const latex = mf.getValue('latex-expanded');
             try {
 
                 document.getElementById('latex').innerHTML = escapeHtml(
                     latex
                 );
 
-
-                let errors = [];
-                let expr = latexToMathjson(latex, {
-                    form: 'canonical',
-                    onError: (err) =>
-                        errors.push('parse: ' + err.code + (err.arg ? ' ' + err.arg : '')),
-                });
-                let jsonLatex = mathjsonToLatex(expr, {
-                    precision: 100, onError: (err) =>
-                        errors.push('emit: ' + err.code + (err.arg ? ' ' + err.arg : '')),
-                });
-
-
-                document.getElementById('mathjson-canonical').innerHTML =
-                    escapeHtml(JSON.stringify(expr, null, 2)) +
-                    '<br><div style="font-weight: bold; color: hsl(4deg, 90%, 50%)">' +
-                    errors.join('<br>') +
-                    '</div><br><hr>' +
-                    escapeHtml(jsonLatex) + '<br><hr>' +
-                    MathLive.latexToMarkup(jsonLatex);
-
-                errors = [];
-                expr = latexToMathjson(latex, {
-                    form: 'full',
-                    preserveLatex: true,
-                    onError: (err) =>
-                        errors.push('parse: ' + err.code + (err.arg ? ' ' + err.arg : '')),
-                });
-                jsonLatex = mathjsonToLatex(expr, {
-                    precision: 100, onError: (err) =>
-                        errors.push('emit: ' + err.code + (err.arg ? ' ' + err.arg : '')),
-                });
-
-                document.getElementById('mathjson-full').innerHTML =
-                    escapeHtml(JSON.stringify(expr, null, 2)) +
-                    '<br><div style="font-weight: bold; color: hsl(4deg, 90%, 50%)">' +
-                    errors.join('<br>') +
-                    '</div><br><hr>' +
-                    escapeHtml(jsonLatex) + '<br><hr>' +
-                    MathLive.latexToMarkup(jsonLatex);
-
-                errors = [];
-                expr = latexToMathjson(latex, {
-                    form: 'full',
-                    invisibleOperator: '',
-                    superscriptOperator: '',
-                    subscriptOperator: '',
-                    // parseArgumentsOfUnknownLatexCommands: false,
-                    invisiblePlusOperator: '',
-                    dictionary: [],
-                    promoteUnknownSymbols: /./,
-
-                    parseArgumentsOfUnknownLatexCommands: true,
-                    parseNumbers: true,
-
-                    onError: (err) =>
-                        errors.push(err.code + (err.arg ? ' ' + err.arg : '')),
-                });
-
-                document.getElementById('mathjson-raw').innerHTML =
-                    escapeHtml(JSON.stringify(expr, null)) +
-                    '<br><div style="font-weight: bold; color: hsl(4deg, 90%, 50%)">' +
-                    errors.join('<br>') +
-                    '</div>';
-
                 document.getElementById(
                     'mathascii'
-                ).innerHTML = escapeHtml(mf.$text('ASCIIMath'));
+                ).innerHTML = escapeHtml(mf.getValue('ASCIIMath'));
             } catch (e) {
                 console.error("Error converting %c " + latex + '%c ' +
                     e.toString(), 'color: red;  background: hsla(0, 60%, 90%)', 'background: transparent');
@@ -214,11 +221,12 @@
         }
 
 
-        updateContent(mf);
-
+        function label(s) {
+            return `<span class='label'>${s}</span>`;
+        }
 
         function escapeHtml(string) {
-            return String(string).replace(/[&<>"'`=/\u200b]/g, function (
+            return String(string).replace(/[&<>"'`= /\u200b]/g, function (
                 s
             ) {
                 return (

@@ -79,7 +79,7 @@ export function releaseSharedElement(el: HTMLElement): void {
 
 /**
  * Checks if the argument is a valid Mathfield.
- * After a Mathfield has been destroyed (for example by calling revertToOriginalContent()
+ * After a Mathfield has been destroyed (for example by calling `dispose()`
  * the Mathfield is no longer valid. However, there may be some pending
  * operations invoked via requestAnimationFrame() for example, that would
  * need to ensure the mathfield is still valid by the time they're executed.
@@ -92,25 +92,17 @@ export function isValidMathfield(mf: MathfieldPrivate): boolean {
  * Return the element which has the caret
  */
 function findElementWithCaret(el: Element): Element {
-    if (
-        el.classList.contains('ML__caret') ||
-        el.classList.contains('ML__text-caret') ||
-        el.classList.contains('ML__command-caret')
-    ) {
-        return el;
-    }
-    let result;
-    for (const child of el.children) {
-        result = findElementWithCaret(child);
-        if (result) break;
-    }
-    return result;
+    return (
+        el.querySelector('.ML__caret') ??
+        el.querySelector('.ML__text-caret') ??
+        el.querySelector('.ML__command-carett')
+    );
 }
 
 /**
  * Return the (x,y) client coordinates of the caret
  */
-export function getCaretPosition(
+export function getCaretPoint(
     el: Element
 ): { x: number; y: number; height: number } | null {
     const caret = findElementWithCaret(el);
