@@ -1,4 +1,4 @@
-/* 0.56.0 *//**
+/**
  *
  * Use MathLive to render and edit mathematical formulas.
  *
@@ -13,8 +13,8 @@
  * console.log(MathLive.latexToAST('e^{i\\pi}+1=0'));
  * </script>
  *
- * @packageDocumentation MathLive SDK Reference 0.56.0
- * @version 0.56.0
+ * @packageDocumentation MathLive SDK Reference {{SDK_VERSION}}
+ * @version {{SDK_VERSION}}
  *
  */
 import { Mathfield } from './mathfield';
@@ -26,7 +26,7 @@ export { Mathfield };
 export { MathfieldConfig };
 export { MathfieldElement };
 /**
- * Current version: `0.56.0`
+ * Current version: `{{SDK_VERSION}}`
  *
  * The version string of the SDK using the [semver](https://semver.org/) convention:
  *
@@ -86,7 +86,7 @@ export declare function latexToMarkup(text: string, options: {
  * ```
  * @keywords create, make, mathfield
  */
-export declare function makeMathField(element: HTMLElement | string, config: MathfieldConfig): Mathfield;
+export declare function makeMathField(element: HTMLElement | string, config: Partial<MathfieldConfig>): Mathfield;
 /**
  * Convert a LaTeX string to a string of MathML markup.
  *

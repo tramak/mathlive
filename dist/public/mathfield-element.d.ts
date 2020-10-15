@@ -1,4 +1,4 @@
-/* 0.56.0 */import { MathfieldConfig } from './config';
+import { MathfieldConfig } from './config';
 import { Selector } from './commands';
 import { InsertOptions, Mathfield, OutputFormat } from './mathfield';
 import { MathfieldErrorCode, ParseMode, ParserErrorCode, Style } from './core';
