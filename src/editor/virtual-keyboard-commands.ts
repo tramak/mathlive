@@ -354,7 +354,7 @@ function toggleVirtualKeyboard(
                     mathfield.focus();
                 }
             );
-            mathfield.config.toDOMElement.appendChild(
+            mathfield.options.toDOMElement.appendChild(
                 mathfield.virtualKeyboard
             );
         }

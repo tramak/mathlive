@@ -52,6 +52,8 @@
 
         <div class="centered"><input id='ta' placeholder="Find Latex"></input></div>
 
+        <div class="mathfield" id="oldschool-mf"></div>
+
         <div id="search-results" class='centered'>
             <h2 style='margin-top: 1em'>Search Results</h2>
             <div class="output" id="search-results-output"></div>
@@ -112,6 +114,7 @@
     </main>
 
     <script type="module">
+        import MathLive from '/dist/mathlive.mjs';
         import { convertLatexToMarkup } from '/dist/mathlive.mjs';
 
         let gSearchLatex;
