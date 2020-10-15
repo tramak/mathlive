@@ -96,7 +96,7 @@ export declare function latexToMarkup(
  */
 export declare function makeMathField(
     element: HTMLElement | string,
-    config: MathfieldConfig
+    config: Partial<MathfieldConfig>
 ): Mathfield;
 
 /**
